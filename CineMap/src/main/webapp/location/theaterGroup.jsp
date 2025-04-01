@@ -18,7 +18,36 @@
     ArrayList<TheaterDTO> list = manager.getTheatersByName(name);
 %>
 
-<h2><%= name %> 영화관</h2>
+<%
+    String homepage = null;
+	String logoSrc = null;
+    if (name != null) {
+        switch (name) {
+            case "CGV":
+                homepage = "https://www.cgv.co.kr/";
+                logoSrc = "../images/cgv_logo.png";
+                break;
+            case "메가박스":
+                homepage = "https://www.megabox.co.kr/";
+                logoSrc = "../images/megabox_logo.png";
+                break;
+            case "롯데시네마":
+                homepage = "https://www.lottecinema.co.kr/";
+                logoSrc = "../images/lotte_logo.png";
+                break;
+        }
+    }
+%>
+
+<h2>
+    <% if (homepage != null) { %>
+        <a href="<%= homepage %>" target="_blank;">
+            <img src="<%= logoSrc %>" alt="<%= name %> 로고" style="height: 60px;">
+        </a>
+    <% } else { %>
+        <span style="cursor: default; color: inherit;"><%= name %> 영화관</span>
+    <% } %>
+</h2>
 
 <div class="theater-list">
     <%
@@ -41,8 +70,6 @@
 
 <div id="map"></div>
 </div>
-
-<h3 style="text-align:center;">영화목록</h3>
 
 <script>
     var mapContainer = document.getElementById('map');
