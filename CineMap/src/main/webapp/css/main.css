@@ -1,0 +1,152 @@
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    background-color: white;
+    color: black;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.dark-mode {
+    background-color: #222;
+    color: white;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: white;
+    color: #e0e0e0;
+    position: relative; /* 위치를 상대적으로 설정하여 광고가 가리지 않도록 */
+}
+
+.dark-mode header {
+    background-color: #444;
+}
+
+.logo {
+    flex: 1;
+}
+
+.search-bar {
+    flex: 2;
+    text-align: center;
+}
+
+.search-bar input {
+    width: 80%;
+    padding: 5px;
+    font-size: 16px;
+}
+
+.login {
+    flex: 1;
+    text-align: right;
+}
+
+#theme-toggle {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    background-color: #f4f4f4;
+    padding: 10px 0;
+}
+
+.dark-mode nav {
+    background-color: #555;
+}
+
+.menu-item {
+    margin: 0 15px;
+    color: #555;
+    cursor: pointer;
+}
+
+.dark-mode .menu .menu-item {
+    margin: 0 15px;
+    color: white;
+    cursor: pointer;
+}
+
+.content-wrapper {
+    display: flex;
+    padding: 20px 15%;
+    gap: 20px; /* left-section과 right-section 사이 간격 */
+}
+
+/* right-section을 flex로 배치 */
+.right-section {
+    width: 37.5%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.left-section {
+    width: 37.5%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.movie-info, .review, .free-board, .map {
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.dark-mode .movie-info, .dark-mode .review, .dark-mode .free-board, .dark-mode .map {
+    background-color: #333;
+    color: white;
+}
+
+/* 광고 스타일 */
+.ad {
+    width: 100%; /* 광고가 right-section의 너비를 차지하도록 설정 */
+    max-width: 300px; /* 최대 크기 설정 */
+    background-color: #e0e0e0; /* 배경 색상 */
+    padding: 20px; /* 안쪽 여백 */
+    border-radius: 10px; /* 모서리 둥글게 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+    position: sticky; /* 스크롤 시 따라오게 설정 */
+    top: 20px; /* "리뷰"와 "MAP" 바로 위에서 시작 */
+    z-index: 1; /* 다른 요소들보다 위에 표시되도록 설정 */
+    flex-shrink: 0; /* 광고가 축소되지 않도록 설정 */
+}
+
+.dark-mode .ad {
+    background-color: #444; /* 다크모드에서 광고 배경색 변경 */
+}
+
+.logo {
+            font-family: 'Gowun Dodum', sans-serif; /* 부드러운 한글 폰트 */
+            font-size: 40px; /* 큰 글씨 크기 */
+            font-weight: 700; /* 굵고 강렬한 텍스트 */
+             background-image: linear-gradient(45deg, #d35400, #8e44ad); /* 따뜻한 오렌지-핑크 그라데이션 */
+            background-clip: text; /* 텍스트에만 그라데이션 적용 */
+            -webkit-background-clip: text; /* 웹킷 브라우저 호환성 */
+            color: transparent; /* 텍스트 내부를 투명하게 설정 */
+            text-align: center;
+        }
+        
+.dark-mode .logo {
+            font-family: 'Gowun Dodum', sans-serif; /* 부드러운 한글 폰트 */
+            font-size: 40px; /* 큰 글씨 크기 */
+            font-weight: 700; /* 굵고 강렬한 텍스트 */
+            background-image: linear-gradient(45deg, #ffaf7b, #ffc3a0); /* 따뜻한 오렌지-핑크 그라데이션 */
+            background-clip: text; /* 텍스트에만 그라데이션 적용 */
+            -webkit-background-clip: text; /* 웹킷 브라우저 호환성 */
+            color: transparent; /* 텍스트 내부를 투명하게 설정 */
+            text-align: center;
+        }
