@@ -46,8 +46,8 @@ public class CookieManager {
         return new String(original);
     }
     // 쿠키 생성, 수정 리팩토링
-    private Cookie refactoringCookie(String name, String value) {
-        Cookie cookie = new Cookie(name, value);
+    private Cookie refactoringCookie(String name, String value) throws Exception {
+        Cookie cookie = new Cookie(name, encrypt(value));
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/");
@@ -56,7 +56,7 @@ public class CookieManager {
     }    
     // 쿠키 생성
     public Cookie createCookie(String name, String value) throws Exception { // 매개변수 쿠키이름, 쿠키값
-    	 return refactoringCookie(name, value);
+    	 return refactoringCookie(name, encrypt(value));
     }
     // 쿠키 읽기
     public String readCookie(Cookie cookie) throws Exception { // 매개변수 쿠키이름
@@ -70,7 +70,7 @@ public class CookieManager {
     // 쿠키 삭제
     public Cookie deleteCookie(String name) { // 매개변수 쿠키이름
         Cookie cookie = new Cookie(name, ""); // 쿠키값 제거
-        cookie.setMaxAge(0);
+        cookie.setMaxAge(0); // 쿠키수명 제거
         cookie.setPath("/");  
         return cookie;
     }
