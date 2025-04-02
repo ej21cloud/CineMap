@@ -16,7 +16,7 @@ boolean b = memberManager.memberUpdate(memberBean, id);
 if(b){
 %>
 	<script>
-	location.href = "index.jsp";
+	location.href = "/CineMap/index.jsp";
 	</script>
 <%
 }else{

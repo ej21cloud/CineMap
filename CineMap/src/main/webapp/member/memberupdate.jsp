@@ -25,11 +25,21 @@ if(memberDto == null){
 
 <script type="text/javascript">
 window.onload =() =>{
-
 	document.querySelector("#btnUpdate").onclick = memberUpdate;
 	document.querySelector("#btnUpdateCancel").onclick = memberUpdateCancel;
-	document.querySelector("#btnDelete").onclick = memberDelete;
+	document.querySelector("#btnDelete").onclick = memberDelete;	
+}
+
+//쇼핑몰 고객이 로그인 후 자신의 정보 수정
+function memberUpdate(){
+	// 입력자료 오류검사 ...
 	
+	document.updateForm.submit();
+	
+}
+
+function memberUpdateCancel(){
+	location.href = "index.jsp";
 }
 </script>
 </head>

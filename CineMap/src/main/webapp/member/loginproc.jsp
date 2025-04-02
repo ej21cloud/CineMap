@@ -13,7 +13,7 @@ boolean b = memberManager.loginCheck(id, passwd);
 
 if(b){
 	session.setAttribute("idKey", id);
-	response.sendRedirect("index.jsp");
+	response.sendRedirect("/CineMap/index.jsp");
 }else{
 	response.sendRedirect("logfail.html");
 }
