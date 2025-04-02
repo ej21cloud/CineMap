@@ -47,7 +47,7 @@
     <header>
         <div class="logo">시네맵</div>
         <div class="search-bar"><input type="text" id="movieSearch" name="movieSearch" placeholder="영화 제목 입력"></div>
-        <div class="login">로그인</div>
+        <div class="login"><a href="/CineMap/member/login.jsp">로그인</a></div>
 		<form method="post">
         <button type="submit" name="toggleMode" value="<%= mode.equals("light") ? "dark" : "light" %>" class="mode-toggle">
             <%= mode.equals("light") ? "다크 모드로 전환" : "라이트 모드로 전환" %>
@@ -85,18 +85,25 @@
             
             // Autocomplete 설정
             searchInput.autocomplete({
-                source: function(request, response) {
-                    $.ajax({
-                        url: "/CineMap/autocomplete.jsp",
-                        dataType: "json",
-                        data: { term: request.term },
-                        success: function(data) {
-                            response(data);
-                        }
-                    });
-                },
-                minLength: 1
-            });
+    source: function(request, response) {
+        console.log("검색어:", request.term);
+        $.ajax({
+            url: "/CineMap/autocomplete.jsp",
+            dataType: "json",
+            data: { term: request.term },
+            success: function(data) {
+                console.log("응답 데이터:", data);
+                response(data);
+            },
+            error: function(xhr, status, error) {
+                console.error("오류:", error);
+                // 오류 발생 시 빈 결과 반환
+                response([]);
+            }
+        });
+    },
+    minLength: 1
+});
 
             // Enter 키 이벤트 핸들러
             searchInput.on("keydown", function(event) {

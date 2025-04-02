@@ -13,7 +13,7 @@ boolean b = memberManager.memberDelete(id);
 if(b){
 %>
 	<script>
-	location.href = "index.jsp";
+	location.href = "/CineMap/index.jsp";
 	</script>
 <%
 }else{

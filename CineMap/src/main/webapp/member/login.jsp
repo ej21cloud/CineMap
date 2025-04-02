@@ -17,13 +17,34 @@ window.onload = () => {
 		document.querySelector("#btnLogin").addEventListener("click", funcLogin);
 		document.querySelector("#btnNewMember").addEventListener("click", funcNewMember);
 }
+//로그인
+function funcLogin(){
+	if(loginForm.id.value === ""){
+		alert("회원 id 입력");
+		loginForm.id.focus();
+	}else if(loginForm.passwd.value === ""){
+		alert("회원 비밀번호 입력");
+		loginForm.passwd.focus();
+	}else{
+		loginForm.action = "loginproc.jsp";
+		loginForm.method = "post";
+		loginForm.submit();
+		location.href("index.jsp")
+	}
+}
+
+// 회원가입
+function funcNewMember(){
+	location.href = "register.jsp";
+}
+
 </script>
 </head>
 <body>
 <%
 if(id != null){	// 로그인 O
 %>
-	<a href="index.jsp">인덱스</a>
+	<a href="/CineMap/index.jsp">인덱스</a>
 <%
 }else{			// 로그인 X
 %>

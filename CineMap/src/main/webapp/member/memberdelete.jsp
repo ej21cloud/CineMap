@@ -18,87 +18,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회원탈퇴</title>
-    <link rel="stylesheet" type="text/css" href="../css/board.css">
-    <script src="../js/script.js"></script>
-    <style>
-        /* 기본 스타일 */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            width: 50%;
-            margin: 0 auto;
-            padding-top: 20px;
-        }
-
-        /* 회원탈퇴 섹션 */
-        .delete-account {
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .delete-account h2 {
-            text-align: center;
-            color: #333;
-        }
-
-        .delete-account form {
-            margin-top: 20px;
-        }
-
-        .delete-account label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-        }
-
-        .delete-account input[type="text"],
-        .delete-account input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .delete-account button {
-            background-color: #f44336;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 5px;
-            width: 48%;
-            margin-top: 10px;
-        }
-
-        .delete-account button:hover {
-            background-color: #e53935;
-        }
-
-        .cancel-button {
-            background-color: #4CAF50;
-        }
-
-        .cancel-button:hover {
-            background-color: #45a049;
-        }
-
-        /* 버튼 그룹 */
-        .button-group {
-            display: flex;
-            justify-content: space-between;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>회원탈퇴</title>
 </head>
 <body>
     <div class="container">
