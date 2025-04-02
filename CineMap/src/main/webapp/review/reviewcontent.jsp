@@ -1,126 +1,229 @@
 <%@ page import="pack.review.ReviewDto" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="pack.review.ReviewManager" %>
+<%@ page import="pack.movie.MovieDto" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%
   response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   response.setHeader("Pragma", "no-cache");
   response.setDateHeader("Expires", 0);
-%>
 
-<jsp:useBean id="reviewManager" class="pack.review.ReviewManager" scope="page" />
-<jsp:useBean id="dto" class="pack.review.ReviewDto" />
-
-<%
-  String num = request.getParameter("num");
+  int movieId = Integer.parseInt(request.getParameter("movieId"));
   String bpage = request.getParameter("page");
 
-  reviewManager.updateReadcnt(num);
-  dto = reviewManager.getData(num);
+  ReviewManager reviewManager = new ReviewManager();
 
-  String apass = "****";
-  String adminOk = (String) session.getAttribute("adminOk");
-  boolean isAdmin = "admin".equals(adminOk);
+  MovieDto movie = reviewManager.getMovieById(movieId);
+  ArrayList<ReviewDto> reviews = reviewManager.getReviewsByMovieId(movieId);
+  double avgRating = reviewManager.getAverageRating(movieId);
 
-  if (adminOk != null) {
-    if (adminOk.equals("admin")) apass = dto.getPass();
-  }
+  request.setAttribute("movie", movie);
+  request.setAttribute("reviews", reviews);
+  request.setAttribute("avgRating", avgRating);
+  request.setAttribute("bpage", bpage);
 %>
 
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>게시판</title>
+  <title>${movie.title} - 상세 보기</title>
   <link rel="stylesheet" type="text/css" href="../css/board.css">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #f8f9fa;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .movie-detail-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .movie-header {
+      text-align: right;
+      margin-bottom: 10px;
+    }
+
+    .movie-header a {
+      margin-left: 10px;
+    }
+
+    .movie-title {
+      background-color: #e0f7fa;
+      padding: 10px;
+      font-weight: bold;
+      font-size: 1.3em;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+
+    .movie-info-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 30px;
+      margin-bottom: 20px;
+    }
+
+    .movie-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .movie-image {
+      flex-shrink: 0;
+    }
+
+    .movie-image img {
+      width: 220px;
+      height: auto;
+      border-radius: 10px;
+    }
+
+    .movie-meta {
+      color: #555;
+      font-size: 1em;
+    }
+
+    .stars {
+      color: gold;
+      font-size: 1.1em;
+      margin-left: 5px;
+    }
+
+    .movie-description {
+      width: 100%;
+      resize: none;
+      border: none;
+      background: transparent;
+      padding: 0;
+      font-size: 1em;
+      font-family: inherit;
+      line-height: 1.5;
+    }
+
+    .comment-box {
+      margin-top: 30px;
+    }
+
+    .comment {
+      border-bottom: 1px solid #ddd;
+      padding: 10px;
+      margin-left: 10px;
+    }
+
+    .comment .meta {
+      font-size: 0.85em;
+      color: gray;
+      margin-top: 4px;
+    }
+
+    .comment .stars {
+      color: gold;
+      margin-bottom: 4px;
+    }
+
+    .likeBtn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      font-size: 1em;
+      background-color: #fff0f0;
+      color: #d6336c;
+      border: 1px solid #f5c2c7;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+
+    .likeBtn:hover {
+      background-color: #ffe3e3;
+      transform: scale(1.05);
+    }
+
+    .likeBtn:active {
+      transform: scale(0.95);
+    }
+
+
+  </style>
 </head>
 <body>
-<table>
-  <tr>
-    <td colspan="2" style="text-align: right">
-      <a href="reply.jsp?num=<%=dto.getNum() %>&page=<%=bpage %>">
-        <img src="../images/reply.gif">
-      </a>
+<div class="movie-detail-container">
+  <div class="movie-header">
+    <a href="reply.jsp?movieId=${movie.id}&page=${bpage}">리뷰 쓰기</a>
+<c:if test="${not empty sessionScope.admin}">
+<a href="edit.jsp?id=${movie.id}&page=${bpage}">수정하기</a>
+    <a href="delete.jsp?id=${movie.id}&page=${bpage}">삭제하기</a>
+</c:if>
+    <a href="movielist.jsp?page=${bpage}">목록 보기</a>
+  </div>
 
-      <a href="edit.jsp?num=<%=dto.getNum() %>&page=<%=bpage %>">
-        <img src="../images/edit.gif">
-      </a>
+  <div class="movie-title">${movie.title}</div>
 
-      <% if (isAdmin) { %>
-      <a href="delete.jsp?num=<%=dto.getNum() %>&page=<%=bpage %>">
-        <img src="../images/del.gif">
-      </a>
-      <% } %>
-
-      <a href="reviewlist.jsp?num=<%=dto.getNum() %>&page=<%=bpage %>">
-        <img src="../images/list.gif">
-      </a>
-    </td>
-  </tr>
-  <tr style="height: 30">
-    <td>개봉일: <%=dto.getReleaseDate() %></td>
-    <td>조회수: <%=dto.getReadcnt() %></td>
-  </tr>
-  <tr>
-    <td colspan="3" style="background-color: cyan">제목 : <%=dto.getTitle() %></td>
-  </tr>
-  <tr>
-    <td colspan="3" style="text-align:center;">
-      <img src="<%=dto.getImageUrl()%>" alt="영화 포스터를 넣어주세요."
-           style="max-width: 400px; height: auto; border-radius: 10px; margin: 10px 0;">
-    </td>
-  </tr>
-  <tr>
-    <td colspan="3">
-      <textarea rows="10" style="width: 99%" readonly="readonly"><%=dto.getCont() %></textarea>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <div style="margin-top: 20px;">
-        <h3>댓글 목록</h3>
-        <%
-          ArrayList<ReviewDto> comments = reviewManager.getComments(dto.getNum());
-          for(ReviewDto comment : comments) {
-            int indent = comment.getNested() * 20;
-        %>
-        <div style="margin-left:<%=indent%>px; border-bottom:1px solid #ddd; padding: 10px 0;">
-          <% if (comment.getNested() == 1 && comment.getRating() > 0) { %>
-          <div style="margin-bottom: 5px;">
-            <%
-              for (int i = 0; i < comment.getRating(); i++) {
-                out.print("★");
-              }
-              for (int i = comment.getRating(); i < 5; i++) {
-                out.print("☆");
-              }
-            %>
-          </div>
-          <% } %>
-
-
-          <%-- 작성자와 내용 --%>
-          <div>
-            <b><%=comment.getName()%></b> : <%=comment.getCont()%>
-          </div>
-
-          <%-- 좋아요, 답글 --%>
-          <div style="font-size: 0.9em; color: gray; margin-top: 3px;">
-            (<%=comment.getBdate()%>) &nbsp;
-            <button class="likeBtn" data-num="<%=comment.getNum()%>">
-              좋아요 (<span id="like-<%=comment.getNum()%>"><%=comment.getLikeCount()%></span>)
-            </button>
-            <a href="reply.jsp?num=<%=comment.getNum()%>&page=<%=bpage%>">답글</a>
-          </div>
-        </div>
-        <%
-          }
-        %>
+  <div class="movie-info-wrapper">
+    <div class="movie-info">
+      <div class="movie-meta">개봉일: ${movie.releaseDate}</div>
+      <div class="movie-meta">장르: ${movie.genre}</div>
+      <div class="movie-meta">출연: ${movie.actorName}</div>
+      <div class="movie-meta">
+        <strong>평균 별점:
+          <fmt:formatNumber value="${avgRating}" pattern="0.0" /> / 5.0
+        </strong>
+        <span class="stars">★</span>
       </div>
-    </td>
-  </tr>
-</table>
+    </div>
+
+    <div class="movie-image">
+      <img src="${movie.imageUrl}" alt="영화 포스터">
+    </div>
+  </div>
+
+  <textarea class="movie-description" rows="10" readonly>${movie.description}</textarea>
+
+  <div class="comment-box">
+    <h3>댓글 목록</h3>
+    <c:forEach var="review" items="${reviews}">
+      <c:set var="indent" value="${review.nested * 20}" />
+      <div class="comment" style="margin-left:${indent}px;">
+        <c:if test="${review.nested == 1 && review.rating > 0}">
+          <div class="stars">
+            <c:forEach var="i" begin="1" end="5">
+              <c:choose>
+                <c:when test="${i <= review.rating}">★</c:when>
+                <c:otherwise>☆</c:otherwise>
+              </c:choose>
+            </c:forEach>
+          </div>
+        </c:if>
+
+        <div><b>${review.nickname}</b> : ${review.cont}</div>
+        <div class="meta">
+          (<fmt:formatDate value="${review.cdate}" pattern="yyyy-MM-dd HH:mm" />)
+          <button class="likeBtn" data-num="${review.num}">
+            ❤️ <span id="like-${review.num}">${review.likeCount}</span>
+          </button>
+          <a href="reply.jsp?num=${review.num}&page=${bpage}">답글</a>
+        </div>
+      </div>
+    </c:forEach>
+  </div>
+</div>
+
 <script>
   const contextPath = "<%=request.getContextPath()%>";
 
@@ -132,12 +235,11 @@
         const num = this.getAttribute("data-num");
         const url = contextPath + "/review/ajax/like.jsp?num=" + num;
 
-
-        fetch("/review/ajax/like.jsp?num=" + num)
+        fetch(url)
                 .then(response => response.text())
                 .then(result => {
                   const countSpan = document.getElementById("like-" + num);
-                  const newCount = parseInt(result.trim());  // ← DB에서 최신 숫자 가져옴
+                  const newCount = parseInt(result.trim());
                   if (!isNaN(newCount)) {
                     countSpan.textContent = newCount;
                   }
@@ -146,7 +248,5 @@
     });
   });
 </script>
-
-
 </body>
 </html>

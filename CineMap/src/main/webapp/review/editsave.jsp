@@ -1,28 +1,24 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
 <% request.setCharacterEncoding("utf-8"); %>
-
-<jsp:useBean id="bean" class="pack.review.ReviewBean" />
-<jsp:setProperty property="*" name="bean" /> <!-- num도 같이 들어옴 -->
-<jsp:useBean id="reviewManager" class="pack.review.ReviewManager" />
+<%@page import="pack.movie.MovieManager" %>
+<%@page import="pack.movie.MovieDto" %>
 
 <%
     String bpage = request.getParameter("page");
-// num은 FormBean을 타고 이미 저장됨
+    int id = Integer.parseInt(request.getParameter("id"));
 
-// 비밀번호 비교 후 수정 여부 결정
-    boolean b = reviewManager.checkPassword(bean.getNum(), bean.getPass()); // 비번 비교
+    MovieDto movie = new MovieDto();
+    movie.setId(id);
+    movie.setTitle(request.getParameter("title"));
+    movie.setActorName(request.getParameter("actorName")); // actorName이 맞으면 유지, directorName이면 필드명 확인 필요
+    movie.setReleaseDate(request.getParameter("releaseDate"));
+    movie.setDescription(request.getParameter("description"));
+    movie.setImageUrl(request.getParameter("imageUrl"));
+    movie.setGenre(request.getParameter("genre"));
 
-    if (b) {
-        reviewManager.saveEdit(bean);
-        response.sendRedirect("reviewlist.jsp?page=" + bpage); // 자료 수정 후 목록보기
-    } else {
-%>
-<script>
-    alert("비밀번호 불일치");
-    history.back(); // 이전 페이지로 돌아간다.
-</script>
-<%
-    }
+    MovieManager movieManager = new MovieManager();
+    movieManager.saveEdit(movie);
 
+    response.sendRedirect("movielist.jsp?page=" + bpage); // 수정 후 목록보기는 movielist로 가야 정확함!
 %>
