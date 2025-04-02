@@ -24,7 +24,7 @@ public class TheaterManager {
         }
     }
     
-    // 이름 일부로 검색
+    // 영화관 분류
     public ArrayList<TheaterDTO> getTheatersByName(String keyword) {
         ArrayList<TheaterDTO> list = new ArrayList<>();
         String sql;

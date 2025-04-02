@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>영화관 메뉴</title>
-  <!-- 꾸미는 것과 예외로 필수 스타일 이라 확인하고 css 정리하시라고 분리 안해뒀습니다 -->
+  <!-- 꾸미는 것과 예외로 필수 스타일 이라 확인하고 css 정리하시라고 분리 안해뒀습니다. -->
   <style>
     .navbar {
     display: flex;
