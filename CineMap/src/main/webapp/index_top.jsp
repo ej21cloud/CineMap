@@ -45,9 +45,21 @@
 <body class="<%= mode %>">
     <!-- 헤더 영역 -->
     <header>
-        <div class="logo">시네맵</div>
+        <div class="logo"><a >시네맵</a></div>
         <div class="search-bar"><input type="text" id="movieSearch" name="movieSearch" placeholder="영화 제목 입력"></div>
-        <div class="login"><a href="/CineMap/member/login.jsp">로그인</a></div>
+        <div class="login">
+    <c:choose>
+        <%-- 세션에 id 값이 있는 경우(로그인 상태) --%>
+        <c:when test="${not empty sessionScope.idKey}">
+            <a href="/CineMap/member/mypage.jsp">마이페이지</a>
+            <a href="/CineMap/member/logout.jsp">로그아웃</a>
+        </c:when>        
+        <%-- 세션에 id 값이 없는 경우(비로그인 상태) --%>
+        <c:otherwise>
+            <a href="/CineMap/member/login.jsp">로그인</a>
+        </c:otherwise>
+    </c:choose>
+</div>
 		<form method="post">
         <button type="submit" name="toggleMode" value="<%= mode.equals("light") ? "dark" : "light" %>" class="mode-toggle">
             <%= mode.equals("light") ? "다크 모드로 전환" : "라이트 모드로 전환" %>

@@ -72,6 +72,5 @@ if(id != null){	// 로그인 O
 <%	
 }
 %>
-
 </body>
 </html>

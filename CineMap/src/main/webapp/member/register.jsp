@@ -19,13 +19,10 @@
 			window.open(url,"id", "toolbar=no,width=300,height=150,top=200,left=100");
 		}
 	}
-	function inputCheck(){
-		// 입력 자료 검사 후 서버로 전송
-		if(regForm.id.value === ""){
-			alert("id를 입력하세요");
-			regForm.id.focus();
-			return;
-		}	
+	function inputCheck() { // 회원 가입
+		if(regForm.id.value==="") { alert("아이디를 입력하세요"); regForm.id.focus(); return; }
+		regForm.submit();
+	}
 </script>
 </head>
 <body>
