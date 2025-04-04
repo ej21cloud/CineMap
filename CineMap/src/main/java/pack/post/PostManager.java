@@ -35,7 +35,7 @@ public class PostManager {
             while (rs.next()) {
                 PostDTO dto = new PostDTO();
                 dto.setNo(rs.getInt("no"));
-                dto.setName(rs.getString("name"));
+                dto.setId(rs.getString("id"));
                 dto.setCategory(rs.getString("category"));
                 dto.setTitle(rs.getString("title"));
                 dto.setContent(rs.getString("content"));
@@ -84,7 +84,7 @@ public class PostManager {
     // 게시글 1개 조회
     public PostDTO getPostByNo(int no) {
         PostDTO dto = null;
-        String sql = "SELECT * FROM posts WHERE no=?";
+        String sql = "SELECT p.*, m.nickname FROM posts p JOIN member m ON p.id = m.id WHERE p.no=?";
         try {
             conn = ds.getConnection();
             pstmt = conn.prepareStatement(sql);
@@ -93,7 +93,8 @@ public class PostManager {
             if (rs.next()) {
                 dto = new PostDTO();
                 dto.setNo(rs.getInt("no"));
-                dto.setName(rs.getString("name"));
+                dto.setId(rs.getString("id"));
+                dto.setNickname(rs.getString("nickname")); // 여기 중요!
                 dto.setCategory(rs.getString("category"));
                 dto.setTitle(rs.getString("title"));
                 dto.setContent(rs.getString("content"));
@@ -105,9 +106,9 @@ public class PostManager {
             System.out.println("getPostByNo err: " + e.getMessage());
         } finally {
             try {
-                if(rs != null) rs.close();
-                if(pstmt != null) pstmt.close();
-                if(conn != null) conn.close();
+                if (rs != null) rs.close();
+                if (pstmt != null) pstmt.close();
+                if (conn != null) conn.close();
             } catch (Exception e2) {}
         }
         return dto;
@@ -116,13 +117,13 @@ public class PostManager {
     // 게시글 작성
     public boolean insertPost(PostDTO dto) {
         boolean result = false;
-        String sql = "INSERT INTO posts (no, name, category, title, content, created_at, views, likes) "
+        String sql = "INSERT INTO posts (no, id, category, title, content, created_at, views, likes) "
                    + "VALUES (?, ?, ?, ?, ?, NOW(), ?, ?)";
         try {
             conn = ds.getConnection();
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, dto.getNo());
-            pstmt.setString(2, dto.getName());
+            pstmt.setString(2, dto.getId());
             pstmt.setString(3, dto.getCategory());
             pstmt.setString(4, dto.getTitle());
             pstmt.setString(5, dto.getContent());
@@ -166,19 +167,45 @@ public class PostManager {
     // 게시글 삭제
     public boolean deletePost(int no) {
         boolean result = false;
-        String sql = "DELETE FROM posts WHERE no = ?";
+        Connection conn = null;
+        PreparedStatement pstmt1 = null;
+        PreparedStatement pstmt2 = null;
+
         try {
             conn = ds.getConnection();
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, no);
-            result = pstmt.executeUpdate() > 0;
+            conn.setAutoCommit(false); // 트랜잭션 시작
+
+            // 1. 댓글 먼저 삭제
+            String deleteCommentsSql = "DELETE FROM comments WHERE post_no = ?";
+            pstmt1 = conn.prepareStatement(deleteCommentsSql);
+            pstmt1.setInt(1, no);
+            pstmt1.executeUpdate();
+
+            // 2. 게시글 삭제
+            String deletePostSql = "DELETE FROM posts WHERE no = ?";
+            pstmt2 = conn.prepareStatement(deletePostSql);
+            pstmt2.setInt(1, no);
+            int affected = pstmt2.executeUpdate();
+
+            if (affected > 0) {
+                conn.commit();  // 둘 다 성공 시 커밋
+                result = true;
+            } else {
+                conn.rollback(); // 게시글 삭제 실패 시 롤백
+            }
+
         } catch (Exception e) {
             System.out.println("deletePost err: " + e.getMessage());
+            try {
+                if (conn != null) conn.rollback();
+            } catch (Exception e2) {}
         } finally {
             try {
-                if (pstmt != null) pstmt.close();
+                if (pstmt1 != null) pstmt1.close();
+                if (pstmt2 != null) pstmt2.close();
+                if (conn != null) conn.setAutoCommit(true); // 복구
                 if (conn != null) conn.close();
-            } catch (Exception e2) {}
+            } catch (Exception e3) {}
         }
         return result;
     }
@@ -195,7 +222,7 @@ public class PostManager {
             while (rs.next()) {
                 PostDTO dto = new PostDTO();
                 dto.setNo(rs.getInt("no"));
-                dto.setName(rs.getString("name"));
+                dto.setId(rs.getString("id"));
                 dto.setCategory(rs.getString("category"));
                 dto.setTitle(rs.getString("title"));
                 dto.setContent(rs.getString("content"));
@@ -219,7 +246,7 @@ public class PostManager {
     // 전체 게시글 페이징 조회
     public ArrayList<PostDTO> getPostsByPage(int start, int pageSize) {
         ArrayList<PostDTO> list = new ArrayList<>();
-        String sql = "SELECT * FROM posts ORDER BY created_at DESC LIMIT ?, ?";
+        String sql = "SELECT p.*, m.nickname FROM posts p JOIN member m ON p.id = m.id ORDER BY p.created_at DESC LIMIT ?, ?";
         try {
             conn = ds.getConnection();
             pstmt = conn.prepareStatement(sql);
@@ -229,13 +256,14 @@ public class PostManager {
             while (rs.next()) {
                 PostDTO dto = new PostDTO();
                 dto.setNo(rs.getInt("no"));
-                dto.setName(rs.getString("name"));
+                dto.setId(rs.getString("id"));
                 dto.setCategory(rs.getString("category"));
                 dto.setTitle(rs.getString("title"));
                 dto.setContent(rs.getString("content"));
                 dto.setCreatedAt(rs.getTimestamp("created_at"));
                 dto.setViews(rs.getInt("views"));
                 dto.setLikes(rs.getInt("likes"));
+                dto.setNickname(rs.getString("nickname")); // 닉네임 설정
                 list.add(dto);
             }
         } catch (Exception e) {
@@ -285,7 +313,7 @@ public class PostManager {
             while (rs.next()) {
                 PostDTO dto = new PostDTO();
                 dto.setNo(rs.getInt("no"));
-                dto.setName(rs.getString("name"));
+                dto.setId(rs.getString("id"));
                 dto.setCategory(rs.getString("category"));
                 dto.setTitle(rs.getString("title"));
                 dto.setContent(rs.getString("content"));
@@ -344,7 +372,7 @@ public class PostManager {
     public ArrayList<PostDTO> getPostsByPageSorted(int start, int pageSize, String sort) {
         ArrayList<PostDTO> list = new ArrayList<>();
         String orderBy = getOrderByClause(sort);
-        String sql = "SELECT * FROM posts ORDER BY " + orderBy + " LIMIT ?, ?";
+        String sql = "SELECT p.*, m.nickname FROM posts p JOIN member m ON p.id = m.id ORDER BY " + orderBy + " LIMIT ?, ?";
         try {
             conn = ds.getConnection();
             pstmt = conn.prepareStatement(sql);
@@ -354,13 +382,14 @@ public class PostManager {
             while (rs.next()) {
                 PostDTO dto = new PostDTO();
                 dto.setNo(rs.getInt("no"));
-                dto.setName(rs.getString("name"));
+                dto.setId(rs.getString("id"));
                 dto.setCategory(rs.getString("category"));
                 dto.setTitle(rs.getString("title"));
                 dto.setContent(rs.getString("content"));
                 dto.setCreatedAt(rs.getTimestamp("created_at"));
                 dto.setViews(rs.getInt("views"));
                 dto.setLikes(rs.getInt("likes"));
+                dto.setNickname(rs.getString("nickname")); // 추가
                 list.add(dto);
             }
         } catch (Exception e) {
@@ -375,7 +404,7 @@ public class PostManager {
     public ArrayList<PostDTO> getPostsByCategoryPageSorted(String category, int start, int pageSize, String sort) {
         ArrayList<PostDTO> list = new ArrayList<>();
         String orderBy = getOrderByClause(sort);
-        String sql = "SELECT * FROM posts WHERE category = ? ORDER BY " + orderBy + " LIMIT ?, ?";
+        String sql = "SELECT p.*, m.nickname FROM posts p JOIN member m ON p.id = m.id WHERE p.category = ? ORDER BY " + orderBy + " LIMIT ?, ?";
         try {
             conn = ds.getConnection();
             pstmt = conn.prepareStatement(sql);
@@ -386,13 +415,14 @@ public class PostManager {
             while (rs.next()) {
                 PostDTO dto = new PostDTO();
                 dto.setNo(rs.getInt("no"));
-                dto.setName(rs.getString("name"));
+                dto.setId(rs.getString("id"));
                 dto.setCategory(rs.getString("category"));
                 dto.setTitle(rs.getString("title"));
                 dto.setContent(rs.getString("content"));
                 dto.setCreatedAt(rs.getTimestamp("created_at"));
                 dto.setViews(rs.getInt("views"));
                 dto.setLikes(rs.getInt("likes"));
+                dto.setNickname(rs.getString("nickname")); // 추가
                 list.add(dto);
             }
         } catch (Exception e) {
@@ -407,7 +437,17 @@ public class PostManager {
     public ArrayList<PostDTO> searchPosts(String type, String keyword, int start, int size, String sort) {
         ArrayList<PostDTO> list = new ArrayList<>();
         String orderBy = getOrderByClause(sort);
-        String sql = "SELECT * FROM posts WHERE " + type + " LIKE ? ORDER BY " + orderBy + " LIMIT ?, ?";
+
+        // 닉네임으로 검색 시 join 및 m.nickname으로 필터링
+        String sql;
+        if ("nickname".equals(type)) {
+            sql = "SELECT p.*, m.nickname FROM posts p JOIN member m ON p.id = m.id " +
+                  "WHERE m.nickname LIKE ? ORDER BY " + orderBy + " LIMIT ?, ?";
+        } else {
+            sql = "SELECT p.*, m.nickname FROM posts p JOIN member m ON p.id = m.id " +
+                  "WHERE p." + type + " LIKE ? ORDER BY " + orderBy + " LIMIT ?, ?";
+        }
+
         try {
             conn = ds.getConnection();
             pstmt = conn.prepareStatement(sql);
@@ -418,13 +458,14 @@ public class PostManager {
             while (rs.next()) {
                 PostDTO dto = new PostDTO();
                 dto.setNo(rs.getInt("no"));
-                dto.setName(rs.getString("name"));
+                dto.setId(rs.getString("id"));
                 dto.setCategory(rs.getString("category"));
                 dto.setTitle(rs.getString("title"));
                 dto.setContent(rs.getString("content"));
                 dto.setCreatedAt(rs.getTimestamp("created_at"));
                 dto.setViews(rs.getInt("views"));
                 dto.setLikes(rs.getInt("likes"));
+                dto.setNickname(rs.getString("nickname")); // 꼭 필요
                 list.add(dto);
             }
         } catch (Exception e) {
@@ -438,7 +479,14 @@ public class PostManager {
     // 검색된 게시글 수 가져오기
     public int countSearchPosts(String type, String keyword) {
         int count = 0;
-        String sql = "SELECT COUNT(*) FROM posts WHERE " + type + " LIKE ?";
+        String sql;
+
+        if ("nickname".equals(type)) {
+            sql = "SELECT COUNT(*) FROM posts p JOIN member m ON p.id = m.id WHERE m.nickname LIKE ?";
+        } else {
+            sql = "SELECT COUNT(*) FROM posts WHERE " + type + " LIKE ?";
+        }
+
         try {
             conn = ds.getConnection();
             pstmt = conn.prepareStatement(sql);
@@ -452,4 +500,63 @@ public class PostManager {
         }
         return count;
     }
+    
+    // 추천수 증가
+    public boolean increaseLikes(int no) {
+        boolean result = false;
+        String sql = "UPDATE posts SET likes = likes + 1 WHERE no = ?";
+        try {
+            conn = ds.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, no);
+            result = pstmt.executeUpdate() > 0;
+        } catch (Exception e) {
+            System.out.println("increaseLikes err: " + e.getMessage());
+        } finally {
+            try {
+                if (pstmt != null) pstmt.close();
+                if (conn != null) conn.close();
+            } catch (Exception e2) {}
+        }
+        return result;
+    }
+    
+    // 조회수 증가
+    public void increaseViews(int no) {
+        String sql = "UPDATE posts SET views = views + 1 WHERE no = ?";
+        try {
+            conn = ds.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, no);
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            System.out.println("increaseViews err: " + e.getMessage());
+        } finally {
+            try {
+                if (pstmt != null) pstmt.close();
+                if (conn != null) conn.close();
+            } catch (Exception e2) {}
+        }
+    }
+    
+    // 추천 취소
+    public boolean decreaseLikes(int no) {
+        boolean result = false;
+        String sql = "UPDATE posts SET likes = likes - 1 WHERE no = ? AND likes > 0";
+        try {
+            conn = ds.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, no);
+            result = pstmt.executeUpdate() > 0;
+        } catch (Exception e) {
+            System.out.println("decreaseLikes err: " + e.getMessage());
+        } finally {
+            try {
+                if (pstmt != null) pstmt.close();
+                if (conn != null) conn.close();
+            } catch (Exception e2) {}
+        }
+        return result;
+    }
+    
 }
