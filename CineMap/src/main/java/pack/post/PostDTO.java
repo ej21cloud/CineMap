@@ -7,12 +7,13 @@ import lombok.Setter;
 @Setter
 public class PostDTO {
     private int no;
-    private String name;
+    private String id;
     private String category;
     private String title;
     private String content;
     private java.sql.Timestamp createdAt;
     private int views;
     private int likes;
+    private String nickname;
 
 }

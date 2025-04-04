@@ -9,7 +9,7 @@
     request.setCharacterEncoding("UTF-8");
 
     dto.setNo(Integer.parseInt(request.getParameter("no")));
-    dto.setName(request.getParameter("name"));
+    dto.setId(request.getParameter("id")); // 작성자 id만 저장
     dto.setCategory(request.getParameter("category"));
     dto.setTitle(request.getParameter("title"));
     dto.setContent(request.getParameter("content"));
@@ -18,6 +18,7 @@
     if (success) {
         response.sendRedirect("view.jsp?no=" + dto.getNo());
     } else {
-        out.print("<script>alert('수정 실패'); history.back();</script>");
+        request.setAttribute("errorMessage", "게시글 수정에 실패했습니다.");
+        request.getRequestDispatcher("error.jsp").forward(request, response);
     }
 %>

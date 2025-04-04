@@ -10,6 +10,7 @@
     if (success) {
         response.sendRedirect("list.jsp");
     } else {
-        out.print("<script>alert('삭제 실패'); history.back();</script>");
+    	request.setAttribute("errorMessage", "게시글 삭제에 실패했습니다.");
+        request.getRequestDispatcher("error.jsp").forward(request, response);
     }
 %>
