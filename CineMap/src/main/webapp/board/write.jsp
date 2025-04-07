@@ -6,14 +6,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <%
-    String id = (String)session.getAttribute("idKey");
-    if (id == null) {
+    String loginId = (String)session.getAttribute("idKey");
+    if (loginId == null) {
         response.sendRedirect("../member/login.jsp");
         return;
     }
 
     MemberManager manager = new MemberManager();
-    MemberDto memberDto = manager.getMember(id);
+    MemberDto memberDto = manager.getMember(loginId);
     request.setAttribute("memberDto", memberDto);
 
     // 쿠키에서 임시 저장값 불러오기
@@ -64,7 +64,9 @@
         <select name="category">
             <option value="스포" <%= "스포".equals(savedCategory) ? "selected" : "" %>>스포</option>
             <option value="개봉예정작" <%= "개봉예정작".equals(savedCategory) ? "selected" : "" %>>개봉예정작</option>
-            <option value="공지사항" <%= "공지사항".equals(savedCategory) ? "selected" : "" %>>공지사항</option>
+		    <% if ("admin".equals(loginId)) { %>
+		        <option value="공지사항" <%= "공지사항".equals(savedCategory) ? "selected" : "" %>>공지사항</option>
+		    <% } %>
             <option value="자유게시판" <%= "자유게시판".equals(savedCategory) ? "selected" : "" %>>자유게시판</option>
         </select>
     </div>
@@ -84,7 +86,12 @@
 <div class="error-message" id="errorMsg"></div>
 </div>
 <script>
-    const bannedWords = ["욕설1", "욕설2", "비속어", "나쁜말"];
+	const bannedWords = [
+	    "시발", "씨발", "ㅅㅂ", "ㅂㅅ", "병신", "ㅄ", "좆", "ㅈ같", "엿같", 
+	    "fuck", "shit", "asshole", "bitch", "dick", "nigger", "retard",
+	    "새끼", "꺼져", "죽어", "개새", "좃같", "지랄", "미친놈", "미친년",
+	    "fuck you", "존나", "개노답", "년놈", "등신", "멍청이", "노답"
+	];
 
     function containsBannedWord(text) {
         return bannedWords.some(word => text.toLowerCase().includes(word.toLowerCase()));

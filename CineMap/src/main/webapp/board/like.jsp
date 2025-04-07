@@ -1,8 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" language="java" %>
-<%@ page import="pack.post.PostManager" %>
 <%@ page import="java.util.ArrayList" %>
 
-<jsp:useBean id="postManager" class="pack.post.PostManager" />
+<jsp:useBean id="dao" class="pack.post.PostDao" />
 
 <%
     request.setCharacterEncoding("UTF-8");
@@ -39,7 +38,7 @@
     boolean success;
     if (likedPosts.contains(no)) {
         // 이미 추천한 경우 → 취소
-        success = postManager.decreaseLikes(no);
+        success = dao.decreaseLikes(no);
         if (success) {
             likedPosts.remove((Integer) no); // Object 타입으로 제거
             session.setAttribute("likedPosts", likedPosts);
@@ -50,7 +49,7 @@
         }
     } else {
         // 추천하지 않은 경우 → 추천
-        success = postManager.increaseLikes(no);
+        success = dao.increaseLikes(no);
         if (success) {
             likedPosts.add(no);
             session.setAttribute("likedPosts", likedPosts);

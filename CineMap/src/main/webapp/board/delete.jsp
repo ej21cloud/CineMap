@@ -1,11 +1,10 @@
-<%@page import="pack.post.PostManager"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
-<jsp:useBean id="postManager" class="pack.post.PostManager" />
+<jsp:useBean id="dao" class="pack.post.PostDao" />
 
 <%
     int no = Integer.parseInt(request.getParameter("no"));
-    boolean success = postManager.deletePost(no);
+    boolean success = dao.deletePost(no);
 
     if (success) {
         response.sendRedirect("list.jsp");

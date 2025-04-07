@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pack.business.SqlMapperInter">
+
+    <select id="searchPosts" resultType="pack.post.PostDto">
+        SELECT p.*, m.nickname
+        FROM posts p
+        JOIN member m ON p.id = m.id
+        <where>
+            <choose>
+                <when test="type == 'nickname'">
+                    m.nickname LIKE CONCAT('%', #{keyword}, '%')
+                </when>
+                <otherwise>
+                    p.${type} LIKE CONCAT('%', #{keyword}, '%')
+                </otherwise>
+            </choose>
+        </where>
+        ORDER BY ${orderBy}
+        LIMIT #{start}, #{size}
+    </select>
+
+    <select id="countSearchPosts" resultType="int">
+        SELECT COUNT(*) 
+        FROM posts p
+        <if test="type == 'nickname'">
+            JOIN member m ON p.id = m.id
+            WHERE m.nickname LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+        <if test="type != 'nickname'">
+            WHERE p.${type} LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+    </select>
+
+</mapper>

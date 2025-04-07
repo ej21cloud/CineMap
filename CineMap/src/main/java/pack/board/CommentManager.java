@@ -28,8 +28,8 @@ public class CommentManager {
     }
 
     // 특정 게시글 번호(no)에 해당하는 모든 댓글을 가져오는 메서드
-    public ArrayList<CommentDTO> getCommentsByPost(int no) {
-        ArrayList<CommentDTO> list = new ArrayList<>();
+    public ArrayList<CommentDto> getCommentsByPost(int no) {
+        ArrayList<CommentDto> list = new ArrayList<>();
         String sql = "SELECT c.*, m.nickname FROM comments c JOIN member m ON c.id = m.id WHERE c.post_no = ? ORDER BY c.gno DESC, c.ono ASC";
         try {
             conn = ds.getConnection();
@@ -37,7 +37,7 @@ public class CommentManager {
             pstmt.setInt(1, no);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                CommentDTO dto = new CommentDTO();
+                CommentDto dto = new CommentDto();
                 dto.setNo(rs.getInt("no"));
                 dto.setPost_no(rs.getInt("post_no"));
                 dto.setId(rs.getString("id"));
@@ -59,7 +59,7 @@ public class CommentManager {
     }
 
     // 댓글 추가 메서드 (likes는 기본값 0으로 설정)
-    public boolean addComment(CommentDTO comment) {
+    public boolean addComment(CommentDto comment) {
         String sql = "INSERT INTO comments (no, post_no, id, content, created_at, likes, gno, ono, nested) VALUES (?, ?, ?, ?, NOW(), ?, ?, ?, ?)";
         try {
             conn = ds.getConnection();
@@ -146,8 +146,8 @@ public class CommentManager {
     }
 
     // 댓글 번호(no)로 댓글 정보를 가져오는 메서드
-    public CommentDTO getCommentByNo(int commentNo) {
-        CommentDTO dto = null;
+    public CommentDto getCommentByNo(int commentNo) {
+        CommentDto dto = null;
         String sql = "SELECT c.*, m.nickname FROM comments c JOIN member m ON c.id = m.id WHERE c.no = ?";
         try {
             conn = ds.getConnection();
@@ -155,7 +155,7 @@ public class CommentManager {
             pstmt.setInt(1, commentNo);
             rs = pstmt.executeQuery();
             if (rs.next()) {
-                dto = new CommentDTO();
+                dto = new CommentDto();
                 dto.setNo(rs.getInt("no"));
                 dto.setPost_no(rs.getInt("post_no"));
                 dto.setId(rs.getString("id"));
@@ -199,8 +199,8 @@ public class CommentManager {
     }
 
     // 회원 정보 가져오기 (id, nickname만)
-    public CommentDTO getMember(String id) {
-        CommentDTO dto = null;
+    public CommentDto getMember(String id) {
+        CommentDto dto = null;
         String sql = "SELECT id, nickname FROM member WHERE id = ?";
         try {
             conn = ds.getConnection();
@@ -208,7 +208,7 @@ public class CommentManager {
             pstmt.setString(1, id);
             rs = pstmt.executeQuery();
             if (rs.next()) {
-                dto = new CommentDTO();
+                dto = new CommentDto();
                 dto.setId(rs.getString("id"));
                 dto.setNickname(rs.getString("nickname"));
             }

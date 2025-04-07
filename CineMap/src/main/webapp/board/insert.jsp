@@ -1,27 +1,22 @@
-<%@page import="pack.post.PostDTO"%>
-<%@page import="pack.post.PostManager"%>
-<%@page import="pack.cookie.CookieManager" %>
-<%@page import="jakarta.servlet.http.Cookie" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="pack.cookie.CookieManager" %>
+<%@ page import="jakarta.servlet.http.Cookie" %>
 
-<jsp:useBean id="postManager" class="pack.post.PostManager" />
-<jsp:useBean id="dto" class="pack.post.PostDTO" />
+<% request.setCharacterEncoding("UTF-8"); %>
+
+<jsp:useBean id="bean" class="pack.post.PostBean" />
+<jsp:setProperty name="bean" property="*" />
+
+<jsp:useBean id="dao" class="pack.post.PostDao" />
 
 <%
-    request.setCharacterEncoding("UTF-8");
+    // 추가 설정 (폼에 없던 값들)
+    bean.setViews(0);
+    bean.setLikes(0);
 
-    int nextNo = postManager.getNextPostNo();
-    dto.setNo(nextNo);
-    dto.setId(request.getParameter("id"));
-    dto.setTitle(request.getParameter("title"));
-    dto.setCategory(request.getParameter("category"));
-    dto.setContent(request.getParameter("content"));
-    dto.setViews(0);
-    dto.setLikes(0);
+    boolean success = dao.insertPost(bean);
 
-    boolean success = postManager.insertPost(dto);
-
-    // 쿠키 삭제 처리 (작성 완료 시)
+    // 쿠키 삭제 처리
     CookieManager cm = CookieManager.getInstance();
     response.addCookie(cm.deleteCookie("savedTitle"));
     response.addCookie(cm.deleteCookie("savedContent"));

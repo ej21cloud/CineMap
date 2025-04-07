@@ -1,18 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE configuration
 PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+"https://mybatis.org/dtd/mybatis-3-config.dtd">
+
 <configuration>
-<properties resource="pack/mybatis/db.properties" />
-<environments default="dev">
-	<environment id="dev">
-	<transactionManager type="JDBC" />
-		<dataSource type="POOLED">
-			<property name="driver" value="${driver}" />
-			<property name="url" value="${url}" />
-			<property name="username" value="${username}" />
-			<property name="password" value="${password}" />
-		</dataSource>
-	</environment>
- </environments>
+	<properties resource="pack/mybatis/db.properties" />
+	
+	<!-- DB 컬럼명과 Java 필드명 자동 매핑 ex) created_at = createdAt -->
+	<settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+	
+	<environments default="dev">
+		<environment id="dev">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="${driver}" />
+				<property name="url" value="${url}" />
+				<property name="username" value="${username}" />
+				<property name="password" value="${password}" />
+			</dataSource>
+		</environment>
+	</environments>
+	
+	<!-- 매퍼 사용시 SqlMapConfig.java에서 따로 등록 필요 X -->
+	<mappers>
+        <mapper class="pack.business.SqlMapperInter"/>
+        <mapper resource="pack/mybatis/PostMapper.xml"/>
+    </mappers>
+
 </configuration>
