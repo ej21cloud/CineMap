@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@page import="pack.board.CommentDTO"%>
+<%@page import="pack.board.CommentDto"%>
 <%@page import="pack.board.CommentManager"%>
 <%
-    request.setCharacterEncoding("utf-8");
+request.setCharacterEncoding("utf-8");
 
     String loginId = (String) session.getAttribute("idKey");
     if (loginId == null) {
@@ -21,7 +21,7 @@
     CommentManager commentManager = new CommentManager();
     int commentNo = commentManager.getNextPostNo();
 
-    CommentDTO dto = new CommentDTO();
+    CommentDto dto = new CommentDto();
     dto.setNo(commentNo);
     dto.setPost_no(postNo);
     dto.setId(loginId);

@@ -1,22 +1,18 @@
-<%@page import="pack.post.PostDTO"%>
-<%@page import="pack.post.PostManager"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="pack.post.PostBean" %>
+<%@ page import="pack.post.PostDao" %>
 
-<jsp:useBean id="postManager" class="pack.post.PostManager" />
-<jsp:useBean id="dto" class="pack.post.PostDTO" />
+<% request.setCharacterEncoding("UTF-8"); %>
+
+<jsp:useBean id="bean" class="pack.post.PostBean" />
+<jsp:setProperty name="bean" property="*" />
+
+<jsp:useBean id="dao" class="pack.post.PostDao" />
 
 <%
-    request.setCharacterEncoding("UTF-8");
-
-    dto.setNo(Integer.parseInt(request.getParameter("no")));
-    dto.setId(request.getParameter("id")); // 작성자 id만 저장
-    dto.setCategory(request.getParameter("category"));
-    dto.setTitle(request.getParameter("title"));
-    dto.setContent(request.getParameter("content"));
-
-    boolean success = postManager.updatePost(dto);
+    boolean success = dao.updatePost(bean);  // DTO 대신 bean 사용
     if (success) {
-        response.sendRedirect("view.jsp?no=" + dto.getNo());
+        response.sendRedirect("view.jsp?no=" + bean.getNo());
     } else {
         request.setAttribute("errorMessage", "게시글 수정에 실패했습니다.");
         request.getRequestDispatcher("error.jsp").forward(request, response);

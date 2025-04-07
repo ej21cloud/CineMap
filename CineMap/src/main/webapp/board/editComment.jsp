@@ -1,12 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@page import="pack.board.CommentDTO"%>
+<%@page import="pack.board.CommentDto"%>
 <%@page import="pack.board.CommentManager"%>
 <%
-    int commentNo = Integer.parseInt(request.getParameter("commentNo"));
+int commentNo = Integer.parseInt(request.getParameter("commentNo"));
     String loginId = (String) session.getAttribute("idKey");
 
     CommentManager manager = new CommentManager();
-    CommentDTO dto = manager.getCommentByNo(commentNo);
+    CommentDto dto = manager.getCommentByNo(commentNo);
 
     if (dto == null || !dto.getId().equals(loginId)) {
         out.println("<script>alert('권한이 없습니다.'); history.back();</script>");
