@@ -1,15 +1,15 @@
-<%@page import="pack.post.PostManager"%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
-<jsp:useBean id="postManager" class="pack.post.PostManager" />
+<jsp:useBean id="dao" class="pack.post.PostDao" />
 
 <%
     int no = Integer.parseInt(request.getParameter("no"));
-    boolean success = postManager.deletePost(no);
+    boolean success = dao.deletePost(no);
 
     if (success) {
         response.sendRedirect("list.jsp");
     } else {
-        out.print("<script>alert('삭제 실패'); history.back();</script>");
+    	request.setAttribute("errorMessage", "게시글 삭제에 실패했습니다.");
+        request.getRequestDispatcher("error.jsp").forward(request, response);
     }
 %>

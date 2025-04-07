@@ -1,65 +1,64 @@
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="pack.theater.TheaterManager" %>
-<%@ page import="pack.theater.TheaterDTO" %>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="pack.theater.TheaterDao, pack.theater.TheaterDto" %>
+<%@ page import="java.util.List" %>
+<%
+    String name = request.getParameter("name");
+    TheaterDao dao = new TheaterDao();
+    List<TheaterDto> list = dao.getTheatersByName(name);
+    request.setAttribute("list", list);
+    request.setAttribute("name", name);
+%>
+
 <!DOCTYPE html>
 <html>
 <head>
    <title>영화관 목록</title>
    <meta charset="UTF-8">
    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=9f8edb499be7a8316726bf8802b0fa00"></script>
-<link rel="stylesheet" type="text/css" href="../css/theater.css">
+   <link rel="stylesheet" type="text/css" href="../css/theater.css">
 </head>
 <body>
 <div class="container">
-<%
-    String name = request.getParameter("name");
-    TheaterManager manager = new TheaterManager();
-    ArrayList<TheaterDTO> list = manager.getTheatersByName(name);
-%>
 
-<%
-    String homepage = null;
-	String logoSrc = null;
-    if (name != null) {
-        switch (name) {
-            case "CGV":
-                homepage = "https://www.cgv.co.kr/";
-                logoSrc = "../images/cgv_logo.png";
-                break;
-            case "메가박스":
-                homepage = "https://www.megabox.co.kr/";
-                logoSrc = "../images/megabox_logo.png";
-                break;
-            case "롯데시네마":
-                homepage = "https://www.lottecinema.co.kr/";
-                logoSrc = "../images/lotte_logo.png";
-                break;
-        }
-    }
-%>
+<c:set var="homepage" value="" />
+<c:set var="logoSrc" value="" />
+
+<c:choose>
+    <c:when test="${name == 'CGV'}">
+        <c:set var="homepage" value="https://www.cgv.co.kr/" />
+        <c:set var="logoSrc" value="../images/cgv_logo.png" />
+    </c:when>
+    <c:when test="${name == '메가박스'}">
+        <c:set var="homepage" value="https://www.megabox.co.kr/" />
+        <c:set var="logoSrc" value="../images/megabox_logo.png" />
+    </c:when>
+    <c:when test="${name == '롯데시네마'}">
+        <c:set var="homepage" value="https://www.lottecinema.co.kr/" />
+        <c:set var="logoSrc" value="../images/lotte_logo.png" />
+    </c:when>
+</c:choose>
 
 <h2>
-    <% if (homepage != null) { %>
-        <a href="<%= homepage %>" target="_blank;">
-            <img src="<%= logoSrc %>" alt="<%= name %> 로고" style="height: 60px;">
-        </a>
-    <% } else { %>
-        <span style="cursor: default; color: inherit;"><%= name %> 영화관</span>
-    <% } %>
+    <c:choose>
+        <c:when test="${not empty homepage}">
+            <a href="${homepage}" target="_blank">
+                <img src="${logoSrc}" alt="${name} 로고" style="height: 60px;">
+            </a>
+        </c:when>
+        <c:otherwise>
+            <span style="cursor: default; color: inherit;">${name} 영화관</span>
+        </c:otherwise>
+    </c:choose>
 </h2>
 
 <div class="theater-list">
-    <%
-        for (int i = 0; i < list.size(); i++) {
-            TheaterDTO dto = list.get(i);
-    %>
-        <div class="theater-item" onclick="showMarker(<%= dto.getLatitude() %>, <%= dto.getLongitude() %>, '<%= dto.getName().replace("'", "\\'") %>', '<%= dto.getAddress().replace("'", "\\'") %>')">
-            🎬 <%= dto.getName() %>
+    <c:forEach var="dto" items="${list}">
+        <div class="theater-item"
+             onclick="showMarker(${dto.latitude}, ${dto.longitude}, '${dto.name}', '${dto.address}')">
+            🎬 ${dto.name}
         </div>
-    <%
-        }
-    %>
+    </c:forEach>
 </div>
 
 <div class="map-image" style="display: flex; align-items: center; margin-bottom: 10px;">
@@ -85,15 +84,9 @@
     function showMarker(lat, lng, name, address) {
         var position = new kakao.maps.LatLng(lat, lng);
 
-        // 기존 마커 제거
-        if (currentMarker) {
-            currentMarker.setMap(null);
-        }
-        if (currentInfowindow) {
-            currentInfowindow.close();
-        }
+        if (currentMarker) currentMarker.setMap(null);
+        if (currentInfowindow) currentInfowindow.close();
 
-        // 새 마커 생성
         currentMarker = new kakao.maps.Marker({
             position: position,
             map: map
