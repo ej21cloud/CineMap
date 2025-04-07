@@ -3,10 +3,11 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>영화 검색 자동완성</title>
+    <title>검색 결과</title>
     <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
 <%@include file="index_top.jsp" %>
+
 </body>
 </html>

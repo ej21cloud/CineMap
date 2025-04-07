@@ -129,7 +129,7 @@ nav {
     background-color: #444; /* 다크모드에서 광고 배경색 변경 */
 }
 
-.logo {
+.logo a {
             font-family: 'Gowun Dodum', sans-serif; /* 부드러운 한글 폰트 */
             font-size: 40px; /* 큰 글씨 크기 */
             font-weight: 700; /* 굵고 강렬한 텍스트 */
