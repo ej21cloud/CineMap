@@ -188,7 +188,6 @@ a {
 	background-color: #333; /* 어두운 배경 */
 	color: white; /* 글자 흰색 */
 }
-
 /* 광고 영역 스타일 */
 .ad {
 	width: 100%;
@@ -202,7 +201,6 @@ a {
 	z-index: 1; /* 가장 위에 */
 	flex-shrink: 0; /* 줄어들지 않음 */
 }
-
 /* 다크모드에서 광고 영역 색상 변경 */
 .dark-mode .ad {
 	background-color: #444; /* 어두운 회색 배경 */
