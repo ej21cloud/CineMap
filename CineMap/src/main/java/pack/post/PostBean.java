@@ -1,18 +1,16 @@
 package pack.post;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
-public class PostDTO {
+@Data
+public class PostBean {
     private int no;
-    private String name;
+    private String id;
     private String category;
     private String title;
     private String content;
     private java.sql.Timestamp createdAt;
     private int views;
     private int likes;
-
+    private String nickname;
 }
