@@ -30,14 +30,14 @@ document.addEventListener("DOMContentLoaded", () => {
 <body>
     <!-- 헤더 영역 -->
     <header>
-        <div class="logo"><a href="/CineMap/index.jsp">시네맵</a></div>
+        <div class="logo"><a href="${pageContext.request.contextPath}/index.jsp">시네맵</a></div>
         <div class="search-bar"><input type="text" id="movieSearch" name="movieSearch" placeholder="영화 제목 입력"></div>
         <div class="login">
     <c:choose>
         <%-- 세션에 id 값이 있는 경우(로그인 상태) --%>
         <c:when test="${not empty sessionScope.idKey}">
-            <a href="/CineMap/member/mypage.jsp">마이페이지</a>
-            <a href="/CineMap/member/logout.jsp">로그아웃</a>
+            <a href="${pageContext.request.contextPath}/member/mypage.jsp">마이페이지</a>
+            <a href="${pageContext.request.contextPath}/member/logout.jsp">로그아웃</a>
         </c:when>        
         <%-- 세션에 id 값이 없는 경우(비로그인 상태) --%>
         <c:otherwise>
@@ -55,21 +55,21 @@ document.addEventListener("DOMContentLoaded", () => {
     	<div class="nav-item">영화관
       <div class="dropdown-content">
         <div class="sub-item">
-          <a href="/CineMap/location/theaterGroup.jsp?name=CGV">CGV</a>
+          <a href="${pageContext.request.contextPath}/location/theaterGroup.jsp?name=CGV">CGV</a>
         </div>
         <div class="sub-item">
-          <a href="/CineMap/location/theaterGroup.jsp?name=메가박스">메가박스</a>
+          <a href="${pageContext.request.contextPath}/location/theaterGroup.jsp?name=메가박스">메가박스</a>
         </div>
         <div class="sub-item">
-          <a href="/CineMap/location/theaterGroup.jsp?name=롯데시네마">롯데시네마</a>
+          <a href="${pageContext.request.contextPath}/location/theaterGroup.jsp?name=롯데시네마">롯데시네마</a>
         </div>
         <div class="sub-item">
-          <a href="/CineMap/location/theaterGroup.jsp?name=기타">그 외</a>
+          <a href="${pageContext.request.contextPath}/location/theaterGroup.jsp?name=기타">그 외</a>
         </div>
       </div>
     </div>
   </div>
-        <div class="menu-item"><a href="/CineMap/board/list.jsp">자유 게시판</a></div>
+        <div class="menu-item"><a href="${pageContext.request.contextPath}/board/list.jsp">자유 게시판</a></div>
     </nav>
 <!-- 검색어 자동 완성 기능 스크립트 -->
         <script>
@@ -100,11 +100,11 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             // 검색 실행 함수
             function executeSearch() {
-                const searchTerm = searchInput.val().trim();
-                if (searchTerm) {
-                    window.location.href = "/CineMap/search.jsp?query=" + encodeURIComponent(searchTerm);
-                }
-            }
+    const searchTerm = searchInput.val().trim();
+    if (searchTerm) {
+        window.location.href = "${pageContext.request.contextPath}/search?query=" + encodeURIComponent(searchTerm);
+    }
+}
         });
         
         const themeToggle = document.getElementById("theme-toggle");
