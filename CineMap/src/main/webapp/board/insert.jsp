@@ -1,27 +1,31 @@
-<%@page import="pack.post.PostDTO"%>
-<%@page import="pack.post.PostManager"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="pack.cookie.CookieManager" %>
+<%@ page import="jakarta.servlet.http.Cookie" %>
 
-<jsp:useBean id="postManager" class="pack.post.PostManager" />
-<jsp:useBean id="dto" class="pack.post.PostDTO" />
+<% request.setCharacterEncoding("UTF-8"); %>
+
+<jsp:useBean id="bean" class="pack.post.PostBean" />
+<jsp:setProperty name="bean" property="*" />
+
+<jsp:useBean id="dao" class="pack.post.PostDao" />
 
 <%
-    request.setCharacterEncoding("UTF-8");
+    // 추가 설정 (폼에 없던 값들)
+    bean.setViews(0);
+    bean.setLikes(0);
 
-    int nextNo = postManager.getNextPostNo();
-    dto.setNo(nextNo); // 번호 수동 지정
+    boolean success = dao.insertPost(bean);
 
-    dto.setName(request.getParameter("name"));
-    dto.setTitle(request.getParameter("title"));
-    dto.setCategory(request.getParameter("category"));
-    dto.setContent(request.getParameter("content"));
-    dto.setViews(0);
-    dto.setLikes(0);
+    // 쿠키 삭제 처리
+    CookieManager cm = CookieManager.getInstance();
+    response.addCookie(cm.deleteCookie("savedTitle"));
+    response.addCookie(cm.deleteCookie("savedContent"));
+    response.addCookie(cm.deleteCookie("savedCategory"));
 
-    boolean success = postManager.insertPost(dto);
     if (success) {
         response.sendRedirect("list.jsp");
     } else {
-        out.print("<script>alert('등록 실패'); history.back();</script>");
+        request.setAttribute("errorMessage", "게시글 등록에 실패했습니다. 다시 시도해주세요.");
+        request.getRequestDispatcher("error.jsp").forward(request, response);
     }
 %>

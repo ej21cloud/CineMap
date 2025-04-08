@@ -128,7 +128,6 @@
                 const word = document.frm.searchWord.value.trim();
                 if (word === "") {
                     document.frm.searchWord.placeholder = "검색어를 입력하세요.";
-                    return;
                 }
                 document.frm.submit();
             }
@@ -136,14 +135,14 @@
     </script>
 </head>
 <body>
+
+<%--
 <div class="nav">
-    [ <a href="../index.html">메인으로</a> ]
-    [ <a href="movielist.jsp?page=1">최근목록</a> ]
     <c:if test="${not empty sessionScope.admin}">
         [ <a href="moviewrite.jsp">새글작성</a> ]
     </c:if>
-    [ <a href="#" onclick="window.open('admin.jsp','','width=500,height=300,top=200,left=300')">로그인</a> ]
 </div>
+--%>
 
 <div class="search-form">
     <form action="movielist.jsp" name="frm" method="post">
