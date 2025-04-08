@@ -4,6 +4,7 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import pack.business.SqlMapperInter;
+import pack.index.IndexMapperInter;
 
 import java.io.Reader;
 
@@ -16,6 +17,11 @@ public class SqlMapConfig {
             Reader reader = Resources.getResourceAsReader(resource);
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
             reader.close();
+            
+            Class[] mappers = { IndexMapperInter.class };
+            for(Class m:mappers) {
+           	 sqlSessionFactory.getConfiguration().addMapper(m);    	 
+            }
 
         } catch (Exception e) {
             System.out.println("SqlMapConfig 오류 : " + e);
